@@ -1,5 +1,6 @@
 package software.amazon.emrcontainers.virtualcluster;
 
+import com.amazonaws.services.emrcontainers.model.ListVirtualClustersRequest;
 import com.amazonaws.services.emrcontainers.model.ListVirtualClustersResult;
 import com.amazonaws.services.emrcontainers.model.VirtualCluster;
 import com.amazonaws.services.emrcontainers.model.VirtualClusterState;
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +50,7 @@ public class ListHandlerTest {
             buildVirtualCluster("1", VirtualClusterState.RUNNING), buildVirtualCluster("2", VirtualClusterState.TERMINATED)));
         doReturn(listVirtualClustersResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(ListVirtualClustersRequest.class), any(Function.class));
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);

@@ -1,8 +1,7 @@
 package software.amazon.emrcontainers.virtualcluster;
 
+import com.amazonaws.services.emrcontainers.model.CreateVirtualClusterRequest;
 import com.amazonaws.services.emrcontainers.model.CreateVirtualClusterResult;
-import software.amazon.cloudformation.exceptions.CfnInvalidRequestException;
-import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.function.Function;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -59,7 +59,7 @@ public class CreateHandlerTest {
         createVirtualClusterResult.setArn("arn");
         doReturn(createVirtualClusterResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(CreateVirtualClusterRequest.class), any(Function.class));
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
