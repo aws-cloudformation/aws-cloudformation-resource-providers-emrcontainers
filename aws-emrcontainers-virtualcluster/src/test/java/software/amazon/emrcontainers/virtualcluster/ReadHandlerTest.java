@@ -1,9 +1,11 @@
 package software.amazon.emrcontainers.virtualcluster;
 
+import com.amazonaws.services.emrcontainers.model.DescribeVirtualClusterRequest;
 import com.amazonaws.services.emrcontainers.model.DescribeVirtualClusterResult;
 import com.amazonaws.services.emrcontainers.model.VirtualCluster;
 import com.amazonaws.services.emrcontainers.model.VirtualClusterState;
 import org.junit.jupiter.api.Assertions;
+import org.mockito.ArgumentMatchers;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
 import software.amazon.cloudformation.proxy.Logger;
@@ -15,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,7 +70,8 @@ public class ReadHandlerTest {
         describeVirtualClusterResult.setVirtualCluster(virtualCluster);
         doReturn(describeVirtualClusterResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
+        ;
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
@@ -99,7 +104,7 @@ public class ReadHandlerTest {
         describeVirtualClusterResult.setVirtualCluster(virtualCluster);
         doReturn(describeVirtualClusterResult)
             .when(proxy)
-            .injectCredentialsAndInvoke(any(), any());
+            .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         Assertions.assertThrows(CfnNotFoundException.class,
             () -> handler.handleRequest(proxy, request, null, logger));
@@ -115,7 +120,7 @@ public class ReadHandlerTest {
 
         doThrow(CfnNotFoundException.class)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         Assertions.assertThrows(CfnNotFoundException.class,
                 () -> handler.handleRequest(proxy, request, null, logger));
