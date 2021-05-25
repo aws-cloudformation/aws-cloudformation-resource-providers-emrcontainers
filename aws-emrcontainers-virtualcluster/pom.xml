@@ -96,8 +96,9 @@
                 <configuration>
                     <compilerArgs>
                         <arg>-Xlint:all,-options,-processing</arg>
-                        <arg>-Werror</arg>
-                    </compilerArgs>
+			<arg>-Werror</arg>
+		    </compilerArgs>
+		    <failOnWarning>false</failOnWarning>
                 </configuration>
             </plugin>
             <plugin>
