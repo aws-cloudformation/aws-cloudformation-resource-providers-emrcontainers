@@ -1,10 +1,12 @@
 package software.amazon.emrcontainers.virtualcluster;
 
 import com.amazonaws.AmazonWebServiceRequest;
+import com.amazonaws.AmazonWebServiceResult;
 import com.amazonaws.services.emrcontainers.model.*;
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.AmazonWebServicesClientProxy;
@@ -19,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +64,7 @@ public class UpdateHandlerTest {
 
         doReturn(getDescribeVirtualClusterResult(VirtualClusterState.RUNNING))
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
@@ -87,7 +90,7 @@ public class UpdateHandlerTest {
 
         doThrow(ResourceNotFoundException.class)
             .when(proxy)
-            .injectCredentialsAndInvoke(any(), any());
+            .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         Assertions.assertThrows(CfnNotFoundException.class, () -> {
             handler.handleRequest(proxy, request, null, logger);
@@ -105,7 +108,7 @@ public class UpdateHandlerTest {
 
         doReturn(getDescribeVirtualClusterResult(VirtualClusterState.TERMINATED))
             .when(proxy)
-            .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), any());
+            .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         Assertions.assertThrows(CfnNotFoundException.class, () -> {
             handler.handleRequest(proxy, request, null, logger);
@@ -125,14 +128,14 @@ public class UpdateHandlerTest {
 
         doReturn(getDescribeVirtualClusterResult(VirtualClusterState.RUNNING))
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
         validate(response);
 
         verify(proxy, times(2))
-                .injectCredentialsAndInvoke(amazonWebServiceRequestArgumentCaptor.capture(), any());
+                .injectCredentialsAndInvoke(amazonWebServiceRequestArgumentCaptor.capture(), ArgumentMatchers.<Function<AmazonWebServiceRequest, DescribeVirtualClusterResult>>any());
 
         // Verify tagging operations
         List<TagResourceRequest> tagResourceRequestList = getRequestArguments(amazonWebServiceRequestArgumentCaptor, TagResourceRequest.class);
@@ -158,14 +161,14 @@ public class UpdateHandlerTest {
 
         doReturn(getDescribeVirtualClusterResult(VirtualClusterState.RUNNING, ImmutableMap.of("key1", "val1")))
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
         validate(response);
 
         verify(proxy, times(2))
-                .injectCredentialsAndInvoke(amazonWebServiceRequestArgumentCaptor.capture(), any());
+                .injectCredentialsAndInvoke(amazonWebServiceRequestArgumentCaptor.capture(), ArgumentMatchers.<Function<AmazonWebServiceRequest, DescribeVirtualClusterResult>>any());
 
         // Verify tagging operations
         List<TagResourceRequest> tagResourceRequestList = getRequestArguments(amazonWebServiceRequestArgumentCaptor, TagResourceRequest.class);
@@ -191,14 +194,14 @@ public class UpdateHandlerTest {
 
         doReturn(getDescribeVirtualClusterResult(VirtualClusterState.RUNNING, ImmutableMap.of("key1", "val1", "key2", "val2", "key3", "val3")))
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
 
         validate(response);
         verify(proxy, times(3))
-                .injectCredentialsAndInvoke(amazonWebServiceRequestArgumentCaptor.capture(), any());
+                .injectCredentialsAndInvoke(amazonWebServiceRequestArgumentCaptor.capture(), ArgumentMatchers.<Function<AmazonWebServiceRequest, DescribeVirtualClusterResult>>any());
 
         // Verify tagging operations
         List<TagResourceRequest> tagResourceRequestList = getRequestArguments(amazonWebServiceRequestArgumentCaptor, TagResourceRequest.class);

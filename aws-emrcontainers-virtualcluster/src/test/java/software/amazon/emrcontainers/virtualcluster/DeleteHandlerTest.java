@@ -1,6 +1,7 @@
 package software.amazon.emrcontainers.virtualcluster;
 
 import com.amazonaws.services.emrcontainers.model.*;
+import org.mockito.ArgumentMatchers;
 import software.amazon.cloudformation.exceptions.CfnNotFoundException;
 import software.amazon.cloudformation.proxy.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +49,7 @@ public class DeleteHandlerTest {
         DeleteVirtualClusterResult deleteVirtualClusterResult = new DeleteVirtualClusterResult();
         doReturn(deleteVirtualClusterResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DeleteVirtualClusterRequest.class), ArgumentMatchers.<Function<DeleteVirtualClusterRequest, DeleteVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response
                 = handler.handleRequest(proxy, request, null, logger);
@@ -71,7 +74,7 @@ public class DeleteHandlerTest {
         describeVirtualClusterResult.setVirtualCluster(virtualCluster);
         doReturn(describeVirtualClusterResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response = handler.handleRequest(
                 proxy, request, CallbackContext.builder().isDeleteInProgress(true).build(), logger);
@@ -96,7 +99,7 @@ public class DeleteHandlerTest {
         describeVirtualClusterResult.setVirtualCluster(virtualCluster);
         doReturn(describeVirtualClusterResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         final ProgressEvent<ResourceModel, CallbackContext> response = handler.handleRequest(
                 proxy, request, CallbackContext.builder().isDeleteInProgress(true).build(), logger);
@@ -116,7 +119,7 @@ public class DeleteHandlerTest {
     public void handleRequest_ResourceNotFound_TerminationSuceeded() {
         doThrow(ResourceNotFoundException.class)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DeleteVirtualClusterRequest.class), ArgumentMatchers.<Function<DeleteVirtualClusterRequest, DeleteVirtualClusterResult>>any());
 
         assertThrows(CfnNotFoundException.class, () -> {
             handler.handleRequest(proxy, request, null, logger);
@@ -128,7 +131,7 @@ public class DeleteHandlerTest {
         ValidationException validationException = new ValidationException("vcid " + Constants.VIRTUAL_CLUSTER_TERMINATED_MESSAGE);
         doThrow(validationException)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DeleteVirtualClusterRequest.class), ArgumentMatchers.<Function<DeleteVirtualClusterRequest, DeleteVirtualClusterResult>>any());
 
         assertThrows(CfnNotFoundException.class, () -> {
             handler.handleRequest(proxy, request, null, logger);
@@ -144,7 +147,7 @@ public class DeleteHandlerTest {
         describeVirtualClusterResult.setVirtualCluster(virtualCluster);
         doReturn(describeVirtualClusterResult)
                 .when(proxy)
-                .injectCredentialsAndInvoke(any(), any());
+                .injectCredentialsAndInvoke(any(DescribeVirtualClusterRequest.class), ArgumentMatchers.<Function<DescribeVirtualClusterRequest, DescribeVirtualClusterResult>>any());
 
         CallbackContext callbackContext = CallbackContext.builder().isDeleteInProgress(true).build();
         final ProgressEvent<ResourceModel, CallbackContext> response = handler.handleRequest(
